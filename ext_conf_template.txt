@@ -1,0 +1,15 @@
+# customcategory=provider=Provider
+
+# customsubcategory=10=Solr Provider
+
+# This key path (…\Monitoring\Solr\SolrProvider) is a configuration identifier, not a class reference. It intentionally omits the "\Provider" namespace segment of the actual FQCN and is kept in sync with the #[ExtConfProperty] paths in SolrProviderConfiguration rather than with the class name.
+provider {
+    mteu\Monitoring\Solr\SolrProvider {
+        # cat=provider/10/10; type=boolean; label=Enable Solr Provider:Monitors the Apache Solr connections configured for EXT:solr in the site configuration. Installing this extension is the opt-in, so this is on by default. The provider stays inactive while EXT:solr is not installed.
+        enabled=1
+        # cat=provider/10/20; type=int+; label=Timeout (seconds):Maximum time to wait for a host or a core to respond before it is treated as unreachable. Defaults to 5.
+        timeout=5
+        # cat=provider/10/30; type=options[Degraded (no alert)=degraded,Unhealthy (alerts)=unhealthy]; label=Indexing error severity:Health state reported when the index queue contains indexing errors. Degraded keeps them visible on the endpoint (HTTP 200) without notifying; Unhealthy is an outage (HTTP 503, may notify).
+        indexingErrorSeverity=degraded
+    }
+}

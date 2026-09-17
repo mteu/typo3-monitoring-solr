@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:monitoring_solr/Resources/Private/Language/locallang.be.xlf">
+		<header/>
+		<body>
+			<trans-unit id="provider.solr.description">
+				<source>Monitors the Apache Solr connections configured for EXT:solr in the site configuration: whether each Solr node is reachable, whether every configured core answers a ping, and whether the index queue recorded indexing errors. Configuration values EXT:solr cannot use are reported rather than replaced by a default. Inactive when the solr extension is not installed or no site configures a Solr read connection.</source>
+				<target>Überwacht die für EXT:solr in der Site-Konfiguration hinterlegten Apache-Solr-Verbindungen: ob jeder Solr-Knoten erreichbar ist, ob jeder konfigurierte Core auf einen Ping antwortet und ob die Index-Queue Indizierungsfehler verzeichnet hat. Inaktiv, wenn die Solr-Extension nicht installiert ist oder in keiner Site eine Solr-Verbindung konfiguriert ist.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.configuration.singular">
+				<source>%d Solr configuration value cannot be used%s</source>
+				<target>%d Solr-Konfigurationswert ist unbrauchbar%s</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.configuration.plural">
+				<source>%d Solr configuration values cannot be used%s</source>
+				<target>%d Solr-Konfigurationswerte sind unbrauchbar%s</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.configuration.invalidWhitespace">
+				<source>%s: "%s" contains invalid whitespace (e.g. a non-breaking space) around "%s". EXT:solr does not strip it and reads the value as empty.</source>
+				<target>%s: „%s“ enthält ungültige Leerzeichen (z. B. ein geschütztes Leerzeichen) um „%s“. EXT:solr entfernt diese nicht und liest den Wert als leer.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.configuration.notNumeric">
+				<source>%s: "%s" is not a number ("%s").</source>
+				<target>%s: „%s“ ist keine Zahl („%s“).</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.configuration.notBoolean">
+				<source>%s: "%s" is not a boolean value ("%s").</source>
+				<target>%s: „%s“ ist kein Wahrheitswert („%s“).</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.host.reachable">
+				<source>Solr host %s is reachable.</source>
+				<target>Solr-Host %s ist erreichbar.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.host.unreachable">
+				<source>Solr host %s is not reachable.</source>
+				<target>Solr-Host %s ist nicht erreichbar.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.cores.none">
+				<source>No cores are configured for the reachable Solr nodes.</source>
+				<target>Für die erreichbaren Solr-Knoten sind keine Cores konfiguriert.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.core.reachable">
+				<source>Core "%s" is reachable.</source>
+				<target>Core „%s“ ist erreichbar.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.core.unreachable">
+				<source>Core "%s" is not reachable.</source>
+				<target>Core „%s“ ist nicht erreichbar.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.indexing.none">
+				<source>No indexing errors are recorded in the index queue.</source>
+				<target>In der Index-Queue sind keine Indizierungsfehler verzeichnet.</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.indexing.singular">
+				<source>%d index queue item recorded an indexing error%s</source>
+				<target>%d Index-Queue-Eintrag hat einen Indizierungsfehler verzeichnet%s</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.indexing.plural">
+				<source>%d index queue items recorded an indexing error%s</source>
+				<target>%d Index-Queue-Einträge haben einen Indizierungsfehler verzeichnet%s</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.indexing.queryFailure">
+				<source>Could not query the Solr index queue: %s</source>
+				<target>Die Solr-Index-Queue konnte nicht abgefragt werden: %s</target>
+			</trans-unit>
+			<trans-unit id="provider.solr.unhealthy">
+				<source>One or more Solr health checks failed. See sub-results for details.</source>
+				<target>Eine oder mehrere Solr-Prüfungen sind fehlgeschlagen. Details siehe Teilergebnisse.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,36 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	scanDirectories:
+		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
+		- ../../.build/vendor/phpunit/phpunit/src
+		- ../../.build/vendor/typo3/testing-framework/Classes
+		- ../../.build/vendor/mteu/typo3-monitoring/Classes
+		- ../../.build/vendor/mteu/typo3-typed-extconf/Classes
+	paths:
+		- ../../Classes
+		- ../../Tests/Functional
+		- ../../Tests/Unit
+	level: max
+	treatPhpDocTypesAsCertain: false
+
+	ergebnis:
+		noExtends:
+			classesAllowedToBeExtended:
+				- Exception
+				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
+				- mteu\Monitoring\Solr\Tests\Functional\MonitoringSolrFunctionalTestCase
+
+	ignoreErrors:
+		- identifier: ergebnis.noConstructorParameterWithDefaultValue
+		- identifier: ergebnis.noNullableReturnTypeDeclaration
+		- identifier: ergebnis.noParameterWithNullDefaultValue
+		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
+		- identifier: ergebnis.noNamedArgument
+
+		# The site configuration reader collects problems through a reference
+		# parameter rather than threading a carrier object through every read.
+		-
+			identifier: ergebnis.noParameterPassedByReference
+			path: ../../Classes/Provider/SiteConfigurationSolrConnectionProvider.php

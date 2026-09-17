@@ -1,0 +1,49 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Unit & Functional Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} with ${{ matrix.dependencies }} dependencies)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ "8.3", "8.4", "8.5" ]
+        typo3-version: [ "13.4", "14.3" ]
+        dependencies: [ "highest", "lowest" ]
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo_sqlite, sqlite3
+          tools: composer:v2
+          coverage: none
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
+
+      # The functional tests need no MySQL: nothing here reads or writes a table,
+      # so phpunit.functional.xml's SQLite defaults carry the suite. Should a test
+      # ever touch tx_solr_indexqueue_item, set the typo3Database* env vars here.
+      - name: Run tests
+        run: composer test

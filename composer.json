@@ -1,0 +1,79 @@
+{
+	"name": "mteu/typo3-monitoring-solr",
+	"description": "Apache Solr health provider for EXT:monitoring: probes host and core reachability, the index queue, and the sanity of the Solr site configuration",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"authors": [
+		{
+			"name": "Martin Adler",
+			"email": "mteu@mailbox.org"
+		}
+	],
+	"require": {
+		"php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+		"ext-filter": "*",
+		"mteu/typo3-monitoring": "^1.0",
+		"mteu/typo3-typed-extconf": "^1.3",
+		"psr/log": "^3.0",
+		"symfony/dependency-injection": "^7.4",
+		"typo3/cms-core": "^13.4.23 || ^14.3.0"
+	},
+	"require-dev": {
+		"ext-simplexml": "*",
+		"eliashaeussler/phpunit-attributes": "^2.0",
+		"eliashaeussler/version-bumper": "^4.1",
+		"ergebnis/composer-normalize": "^2.47",
+		"phpunit/phpunit": "^12.1 || ^13.1",
+		"roave/security-advisories": "dev-latest",
+		"typo3/testing-framework": "^9.2"
+	},
+	"suggest": {
+		"apache-solr-for-typo3/solr": "The extension this provider monitors. Without it the provider stays inactive."
+	},
+	"autoload": {
+		"psr-4": {
+			"mteu\\Monitoring\\Solr\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"mteu\\Monitoring\\Solr\\Tests\\": "Tests/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"eliashaeussler/version-bumper": true,
+			"ergebnis/composer-normalize": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"lock": true,
+		"sort-packages": true,
+		"vendor-dir": ".build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"Package": {
+				"providesPackages": {}
+			},
+			"extension-key": "monitoring_solr",
+			"version": "0.1.0",
+			"web-dir": ".build/web"
+		}
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"@cgl install"
+		],
+		"cgl": "@composer -d Tests/CGL --",
+		"fix": "@cgl fix",
+		"lint": "@cgl lint",
+		"sca": "@cgl sca",
+		"test": [
+			"@test:unit",
+			"@test:functional"
+		],
+		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
+		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage"
+	}
+}
