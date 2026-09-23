@@ -5,7 +5,7 @@
 		"ergebnis/phpstan-rules": "2.13.1",
 		"friendsofphp/php-cs-fixer": "3.95.27",
 		"phpstan/extension-installer": "1.4.3",
-		"phpstan/phpstan": "2.2.14",
+		"phpstan/phpstan": "2.2.15",
 		"phpstan/phpstan-deprecation-rules": "2.0.5",
 		"phpstan/phpstan-strict-rules": "2.0.12",
 		"roave/security-advisories": "dev-latest",
