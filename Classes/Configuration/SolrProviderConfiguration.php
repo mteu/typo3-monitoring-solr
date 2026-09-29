@@ -54,6 +54,12 @@ final readonly class SolrProviderConfiguration implements ProviderConfiguration
         public int $timeout = 5,
 
         /**
+         * Lifetime (in seconds) of a cached probe result.
+         */
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Solr\\SolrProvider.cacheLifetime')]
+        public int $cacheLifetime = 30,
+
+        /**
          * Severity reported when the index queue contains indexing errors.
          * Defaults to degraded: indexing errors are attention-worthy but, unlike
          * an unreachable host or core, do not take the search backend offline.
