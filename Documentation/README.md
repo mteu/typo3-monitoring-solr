@@ -1,28 +1,28 @@
 # Solr Monitoring Provider
 
-Monitors the [Apache Solr](https://github.com/TYPO3-Solr/ext-solr) connections configured for your TYPO3 instance and reports their health on the
-monitoring endpoint. A search backend can fail in several independent ways:
-- a Solr node can be down,
-- a single core can be missing,
-- or indexing can quietly start failing while queries still work.
+Monitors the [Apache Solr](https://github.com/TYPO3-Solr/ext-solr) connections
+configured for your TYPO3 instance and reports their health on the monitoring
+endpoint. A search backend can fail in several independent ways — a Solr node
+can be down, a single core can be missing, or indexing can quietly start failing
+while queries still work — so this provider reports these as distinct concerns.
 
-This provider reports these as distinct concerns.
-
-The provider is enabled by default and inactive unless the `apache-solr-for-typo3/solr` extension is installed,
-and at least one site configures a Solr read connection.
-
+The provider is enabled by default and inactive unless the `apache-solr-for-typo3/solr`
+extension is installed, and at least one site configures a Solr read connection.
 Without one (e.g. before any site configuration or root page exists) there
-is nothing to probe, so the provider reports inactive rather than a misleading "healthy". Configuration that is present
-but unusable is the exception. It keeps the provider active and is reported, because a setup `EXT:solr` cannot read is a failure, not an absence.
+is nothing to probe, so the provider reports inactive rather than a
+misleading "healthy". Configuration that is *present but unusable* is the
+exception: it keeps the provider active and is reported, because a setup EXT:solr
+cannot read is a failure, not an absence.
 
 ## No connection configuration to maintain
 
-The provider reads the read connections straight from the TYPO3 site configuration. Those are the same
-`solr_*_read` settings (scheme, host, port, path, core) that EXT:solr itself uses
-at runtime, configured in the *Sites* backend module or in `config/sites/<site>/config.yaml`.
+The provider reads the read connections straight from the TYPO3 site configuration —
+the same `solr_*_read` settings (scheme, host, port, path, core) that EXT:solr itself
+uses at runtime, configured in the *Sites* backend module or in `config/sites/<site>/config.yaml`.
 
 Every setting may be declared once for the whole site and overridden per site
-language. A key absent from the language falls back to the site level. Both halves of this layout are read:
+language. A key absent from the language falls back to the site level, exactly as
+EXT:solr resolves it. Both halves of this layout are read:
 
 ```yaml
 solr_enabled_read: true
@@ -64,9 +64,10 @@ sub-results. The aggregate is healthy only when all checks pass.
 
 ## Unusable values are reported, not defaulted
 
-A value that is present but cannot be read is never replaced by default.
-A default would point the probe at something the site does not use. This would be turning the
-health check green while TYPO3 cannot talk to Solr at all. Three cases are reported:
+A value that is present but cannot be read is **never** replaced by a default.
+A default would point the probe at something the site does not use — turning the
+health check green while TYPO3 cannot talk to Solr at all — which is precisely
+the drift this provider exists to catch. Three cases are reported:
 
 | Reported when                                                                              | Why it matters                                                                                           |
 |--------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
@@ -76,10 +77,10 @@ health check green while TYPO3 cannot talk to Solr at all. Three cases are repor
 
 ### The `/solr` path segment
 
-Solr serves below a `/solr` segment, and Solarium appends
+Solr serves below a `/solr` segment, and Solarium — which EXT:solr uses — appends
 it itself after stripping a configured trailing one. Since EXT:solr v12 the site
-configuration therefore must not carry it (`solr_path_read: /`), while older
-setups still do. Both spellings are normalised to the same probe URI, so neither
+configuration therefore must **not** carry it (`solr_path_read: /`), while older
+setups still do. Both spellings are normalized to the same probe URI, so neither
 convention produces a false alarm:
 
 | `solr_path_read` | Probed root URI                |
@@ -90,9 +91,9 @@ convention produces a false alarm:
 
 ## Configuration
 
-Only the toggle, the probe time-out, and the indexing-error severity are
-configured here. Again, the connections come from the site configuration. Set via
-Extension Configuration (`monitoring_solr`) or `config/system/settings.php`:
+Only the toggle, the probe timeout, the cache lifetime, and the indexing-error
+severity are configured here. Again, the connections come from the site configuration.
+Set via Extension Configuration (`monitoring_solr`) or `config/system/settings.php`:
 
 ```php
 return [
@@ -102,6 +103,7 @@ return [
                 'mteu\\Monitoring\\Solr\\SolrProvider' => [
                     'enabled' => true,
                     'timeout' => 5,
+                    'cacheLifetime' => 30,
                     'indexingErrorSeverity' => 'degraded',
                 ],
             ],
@@ -112,14 +114,38 @@ return [
 
 | Setting                 | Default    | Description                                                                                                                                                            |
 |-------------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `enabled`               | `true`     | Enables the provider. Installing this extension is itself the opt-in, so it is on by default. Set `false` to keep it installed but silent. :shrug:                     |
+| `enabled`               | `true`     | Enables the provider. Installing this extension is itself the opt-in, so it is on by default. Set `false` to keep it installed but silent.                             |
 | `timeout`               | `5`        | Maximum time (seconds) to wait for a host or a core before it is treated as unreachable.                                                                               |
+| `cacheLifetime`         | `30`       | How long a probe result is reused before the Solr nodes are contacted again. See [Caching](#caching).                                                                  |
 | `indexingErrorSeverity` | `degraded` | Status reported when the index queue contains indexing errors: `degraded` (visible on the endpoint at HTTP 200, no notification) or `unhealthy` (an outage, HTTP 503). |
 
 Indexing errors default to `degraded` because the search backend keeps serving
 queries while indexing is broken — it is attention-worthy but not, on its own, an
 outage. Pair it with `reportDispatcher.notifyFrom = degraded` (see
-[Reporters](https://github.com/mteu/ext-monitoring-src/blob/main/Documentation/Reporters.md)) if you want degradation to page.
+[Reporters](https://github.com/mteu/typo3-monitoring/blob/main/Documentation/Reporters.md)) if you want degradation to page.
+
+## Caching
+
+Results are cached, since this monitoring provider does network I/O.
+At the default 5-second timeout, a handful of unreachable nodes turns
+the health endpoint into a request that takes tens of seconds — long enough that
+the load balancer or external monitor polling it gives up first and reports a
+failing TYPO3 where the truth is a degraded search backend.
+
+The cache key is derived from the resolved connections and configuration problems,
+not from the provider name. Edit a site configuration, and the next request looks
+under a different key, so a connection an operator has just fixed is re-probed
+immediately rather than after `cacheLifetime` seconds. Everything else — a node
+that came back up, an emptied index queue — is picked up within `cacheLifetime`.
+
+A failing result is cached for exactly as long as a healthy one. Failure is the
+expensive case here.
+
+> [!NOTE]
+> `cacheLifetime = 0` does not disable caching. The host extension reads a
+> lifetime of `0` as "use the intance default" (15 minutes by default), so this
+> provider reports `1` second instead — the closest thing to no caching that the
+> host's caching contract allows.
 
 ## Example output
 

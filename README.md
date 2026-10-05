@@ -53,7 +53,7 @@ That's the whole setup. `EXT:monitoring` discovers the provider through its serv
 
 In contrast to other providers, this one is enabled by default. Installing this extension is the opt-in.
 Since Connections are read from the site settings, they're not configured here.
-Only the toggle, the probe time-out, and the indexing-error severity:
+Only the toggle, the probe time-out, the cache lifetime, and the indexing-error severity:
 
 ```php
 # config/system/settings.php
@@ -65,6 +65,7 @@ return [
                 'mteu\Monitoring\Solr\SolrProvider' => [
                     'enabled' => true,
                     'timeout' => 5,
+                    'cacheLifetime' => 30,
                     'indexingErrorSeverity' => 'degraded',
                 ],
             ],
@@ -81,7 +82,8 @@ active and is reported, because a setup `EXT:solr` cannot read likely counts as 
 
 ## 📙 Documentation
 Please have a look at the [extension documentation](Documentation/README.md). It covers the site-configuration layout
-this provider reads, the `/solr` path normalization, what counts as an unusable value, and notes on TLS and proxies.
+this provider reads, the `/solr` path normalization, what counts as an unusable value, how results are cached, and notes
+on TLS and proxies.
 
 ## 🤝 Contributing
 Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the

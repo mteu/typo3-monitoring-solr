@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Solr\Tests\Functional;
 
+use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Solr\Configuration\SolrProviderConfiguration;
 use mteu\Monitoring\Solr\Provider\DoctrineIndexQueueRepository;
@@ -58,6 +59,7 @@ final class ContainerIntegrationTest extends MonitoringSolrFunctionalTestCase
 
         self::assertInstanceOf(SolrProvider::class, $provider);
         self::assertInstanceOf(MonitoringProvider::class, $provider);
+        self::assertInstanceOf(CacheableMonitoringProvider::class, $provider);
     }
 
     #[Test]
@@ -84,5 +86,6 @@ final class ContainerIntegrationTest extends MonitoringSolrFunctionalTestCase
         self::assertInstanceOf(SolrProviderConfiguration::class, $configuration);
         self::assertTrue($configuration->isEnabled());
         self::assertSame(5, $configuration->timeout);
+        self::assertSame(30, $configuration->cacheLifetime);
     }
 }
