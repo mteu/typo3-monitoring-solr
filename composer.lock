@@ -1815,7 +1815,8 @@
                 "issues": "https://github.com/php-fig/container/issues",
                 "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
-            "time": "2021-11-05T16:47:00+00:00"
+            "time": "2021-11-05T16:47:00+00:00",
+            "published-time": "2021-11-05T16:53:27+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -2625,16 +2626,16 @@
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "v7.4.21",
+            "version": "v7.4.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "059334a6ef0eedfcabfec52fd0a71576d610a70c"
+                "reference": "f98a1b0625d5608a723481fa104b5473e6b18ebd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/059334a6ef0eedfcabfec52fd0a71576d610a70c",
-                "reference": "059334a6ef0eedfcabfec52fd0a71576d610a70c",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/f98a1b0625d5608a723481fa104b5473e6b18ebd",
+                "reference": "f98a1b0625d5608a723481fa104b5473e6b18ebd",
                 "shasum": ""
             },
             "require": {
@@ -2685,7 +2686,7 @@
             "description": "Allows you to standardize and centralize the way objects are constructed in your application",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/dependency-injection/tree/v7.4.21"
+                "source": "https://github.com/symfony/dependency-injection/tree/v7.4.22"
             },
             "funding": [
                 {
@@ -2705,7 +2706,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-13T12:53:30+00:00"
+            "time": "2026-10-25T14:40:16+00:00",
+            "published-time": "2026-10-28T18:20:45+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2776,7 +2778,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-05T06:23:12+00:00"
+            "time": "2026-06-05T06:23:12+00:00",
+            "published-time": "2026-06-27T21:46:34+00:00"
         },
         {
             "name": "symfony/doctrine-messenger",
@@ -3814,7 +3817,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-06T19:46:18+00:00"
+            "time": "2026-10-06T19:46:18+00:00",
+            "published-time": "2026-10-07T07:22:55+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -4951,7 +4955,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-27T15:39:01+00:00"
+            "time": "2026-07-27T15:39:01+00:00",
+            "published-time": "2026-08-30T19:56:37+00:00"
         },
         {
             "name": "symfony/string",
@@ -5384,7 +5389,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-29T06:30:03+00:00"
+            "time": "2026-08-29T06:30:03+00:00",
+            "published-time": "2026-08-30T21:43:49+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -11097,5 +11103,5 @@
     "platform-dev": {
         "ext-simplexml": "*"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
