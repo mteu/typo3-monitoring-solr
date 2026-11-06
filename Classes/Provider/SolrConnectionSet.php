@@ -47,4 +47,38 @@ final readonly class SolrConnectionSet
     {
         return $this->connections === [] && $this->problems === [];
     }
+
+    /**
+     * Stable identity of everything this set would have probed or reported.
+     *
+     * Two sets share a fingerprint exactly when they name the same connections
+     * and the same problems. A cached probe result keyed by it therefore belongs
+     * to the site configuration that produced it.
+     */
+    public function fingerprint(): string
+    {
+        $records = [
+            ...array_map(
+                static fn(SolrConnection $connection): string => implode("\x1f", [
+                    'connection',
+                    $connection->label,
+                    $connection->rootUri,
+                    $connection->core,
+                ]),
+                $this->connections,
+            ),
+            ...array_map(
+                static fn(SolrConfigurationProblem $problem): string => implode("\x1f", [
+                    'problem',
+                    $problem->issue->value,
+                    $problem->origin,
+                    $problem->key,
+                    $problem->value,
+                ]),
+                $this->problems,
+            ),
+        ];
+
+        return hash('sha256', implode("\x1e", $records));
+    }
 }
