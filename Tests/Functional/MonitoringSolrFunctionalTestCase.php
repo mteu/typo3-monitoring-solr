@@ -17,13 +17,18 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Solr\Tests\Functional;
 
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringSolrFunctionalTestCase.
  *
  * Loads this extension together with the host extension it plugs into, so the
- * tests exercise the same container wiring an installation gets.
+ * tests exercise the same container wiring an installation gets, and gives the
+ * host's result cache a database backend so cached entries actually persist
+ * across operations within a test — the provider is cacheable, and the default
+ * transient backend would make every read a miss.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -34,5 +39,20 @@ abstract class MonitoringSolrFunctionalTestCase extends FunctionalTestCase
         'monitoring',
         'monitoring_solr',
         'typed_extconf',
+    ];
+
+    protected array $configurationToUseInTestInstance = [
+        'SYS' => [
+            'caching' => [
+                'cacheConfigurations' => [
+                    'typo3_monitoring' => [
+                        'frontend' => VariableFrontend::class,
+                        'backend' => Typo3DatabaseBackend::class,
+                        'options' => [],
+                        'groups' => ['system'],
+                    ],
+                ],
+            ],
+        ],
     ];
 }

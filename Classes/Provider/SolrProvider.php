@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Solr\Provider;
 
-use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
@@ -47,12 +47,18 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  *
  * The provider is disabled by default and only active when EXT:solr is loaded.
  *
+ * Results are cached. Unlike the host extension's own providers, which only run
+ * database queries, this one does network I/O with a timeout per node and per
+ * core — uncached, a handful of unreachable nodes would make a health endpoint
+ * that a load balancer polls take longer than the load balancer waits, and a
+ * degraded Solr would present as a failing TYPO3.
+ *
  * @internal
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class SolrProvider implements MonitoringProvider
+final readonly class SolrProvider implements CacheableMonitoringProvider
 {
     /**
      * Number of failing item descriptions included in a reason to keep the
@@ -61,6 +67,8 @@ final readonly class SolrProvider implements MonitoringProvider
     private const int SAMPLE_SIZE = 5;
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring_solr/Resources/Private/Language/locallang.be.xlf';
+
+    private const string CACHE_KEY_PREFIX = 'monitoring_solr_';
 
     public function __construct(
         private SolrProviderConfiguration $configuration,
@@ -99,6 +107,20 @@ final readonly class SolrProvider implements MonitoringProvider
         // like an absent one: as silence.
         return ExtensionManagementUtility::isLoaded('solr')
             && !$this->connectionProvider->resolveConnections()->isEmpty();
+    }
+
+    /**
+     * Keyed by what would be probed, not by the provider, so that a site
+     * configuration change invalidates the entry on its own.
+     */
+    public function getCacheKey(): string
+    {
+        return self::CACHE_KEY_PREFIX . $this->connectionProvider->resolveConnections()->fingerprint();
+    }
+
+    public function getCacheLifetime(): int
+    {
+        return max(1, $this->configuration->cacheLifetime);
     }
 
     public function execute(): Result

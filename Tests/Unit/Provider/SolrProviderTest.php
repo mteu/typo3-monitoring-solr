@@ -78,6 +78,76 @@ final class SolrProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    public function cacheLifetimeDefaultsToThirtySeconds(): void
+    {
+        self::assertSame(30, $this->createProvider()->getCacheLifetime());
+    }
+
+    #[Test]
+    public function cacheLifetimeReflectsConfiguration(): void
+    {
+        self::assertSame(
+            60,
+            $this->createProvider(configuration: new SolrProviderConfiguration(cacheLifetime: 60))->getCacheLifetime(),
+        );
+    }
+
+    #[Test]
+    public function cacheLifetimeOfZeroFallsBackToOneSecondRatherThanTheFleetDefault(): void
+    {
+        // The host reads 0 as "use the fleet-wide default", which is 15 minutes.
+        // An operator zeroing this setting wants less caching, not more.
+        self::assertSame(
+            1,
+            $this->createProvider(configuration: new SolrProviderConfiguration(cacheLifetime: 0))->getCacheLifetime(),
+        );
+    }
+
+    #[Test]
+    public function cacheKeyIsAValidCacheIdentifier(): void
+    {
+        self::assertMatchesRegularExpression(
+            '/^[a-zA-Z0-9_%\-&]+$/',
+            $this->createProvider()->getCacheKey(),
+        );
+    }
+
+    #[Test]
+    public function cacheKeyIsStableWhileTheConnectionSetIsUnchanged(): void
+    {
+        self::assertSame($this->createProvider()->getCacheKey(), $this->createProvider()->getCacheKey());
+    }
+
+    #[Test]
+    public function cacheKeyChangesWhenTheSiteConfigurationChanges(): void
+    {
+        // Otherwise an operator fixes a broken connection, and the endpoint keeps
+        // serving the stale failure until the lifetime runs out.
+        self::assertNotSame(
+            $this->createProvider()->getCacheKey(),
+            $this->createProvider(
+                connections: [new SolrConnection('main / English (core_en)', 'http://solr:8983/solr', 'core_en')],
+            )->getCacheKey(),
+        );
+    }
+
+    #[Test]
+    public function cacheKeyChangesWhenAConfigurationProblemAppears(): void
+    {
+        self::assertNotSame(
+            $this->createProvider()->getCacheKey(),
+            $this->createProvider(problems: [
+                new SolrConfigurationProblem(
+                    SolrConfigurationIssue::NotNumeric,
+                    'main / English',
+                    'solr_port_read',
+                    'eight-nine-eight-three',
+                ),
+            ])->getCacheKey(),
+        );
+    }
+
+    #[Test]
     public function reportsHealthyWhenHostAndCoreAreReachableAndNoIndexingErrors(): void
     {
         $result = $this->createProvider()->execute();

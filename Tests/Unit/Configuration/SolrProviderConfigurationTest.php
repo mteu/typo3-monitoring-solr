@@ -52,6 +52,14 @@ final class SolrProviderConfigurationTest extends Framework\TestCase
     }
 
     #[Test]
+    public function cacheLifetimeDefaultsToThirtySeconds(): void
+    {
+        // Short enough that a fixed outage clears quickly, long enough that a
+        // polled endpoint does not pay the probe timeouts on every request.
+        self::assertSame(30, (new SolrProviderConfiguration())->cacheLifetime);
+    }
+
+    #[Test]
     public function indexingErrorSeverityDefaultsToDegraded(): void
     {
         self::assertSame(
