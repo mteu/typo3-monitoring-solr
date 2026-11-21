@@ -10,7 +10,7 @@
 		}
 	],
 	"require": {
-		"php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+		"php": "~8.6.0",
 		"ext-filter": "*",
 		"mteu/typo3-monitoring": "^1.0",
 		"mteu/typo3-typed-extconf": "^1.3",
